@@ -90,6 +90,7 @@ public class ChestControl : MonoBehaviour
                     itemsInChest.RemoveAt(0);
                     if(itemsInChest.Count == 0)
                     {
+                        canvasHandler.IsNearChest = false;
                         Destroy(this.gameObject); 
                     }
                    
