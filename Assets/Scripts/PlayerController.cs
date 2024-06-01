@@ -46,9 +46,17 @@ public class PlayerController : MonoBehaviour
     TMP_Text healthText;
     // Start is called before the first frame update
 
-  
+
+    GameObject inventoryCanvas;
+    InventoryDisplay inventoryDisplay;
+    bool inventoryOpen = false;
+    float timeOpened = 0;
+
     void Start()
     {
+        inventoryCanvas = GameObject.Find("InventoryCanvas");
+        inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
+
         healthText = GameObject.Find("PlayerHealth").GetComponent<TMP_Text>();
         for(int i = 0; i < totalItemsInGame; i++)
         {
@@ -68,6 +76,17 @@ public class PlayerController : MonoBehaviour
         playerTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * mouseSens, 0));
         camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
 
+
+        if (Input.GetKey(KeyCode.Tab) && Time.time - timeOpened > 0.1f)
+        {
+            inventoryOpen = true;
+            timeOpened = Time.time;
+        }
+        if(inventoryOpen) 
+        {
+            inventoryDisplay.updateInventory();
+            inventoryOpen = false;
+        }
     }
     public void FixedUpdate()
     {

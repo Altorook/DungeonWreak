@@ -84,6 +84,8 @@ public class ChestControl : MonoBehaviour
                 }
                 if (Input.GetKey(KeyCode.E) && lootCoolDown == false)
                 {
+                    
+                    
                     lootCoolDown = true;
                     PlayerController playCont = other.gameObject.GetComponent<PlayerController>();
                     playCont.inventory[itemsInChest.ElementAt(0)]+=1;

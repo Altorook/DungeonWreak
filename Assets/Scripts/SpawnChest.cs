@@ -14,7 +14,7 @@ public class SpawnChest : MonoBehaviour
     void Start()
     {
         randomSpawn = Random.Range(randomSpawnMin, randomSpawnMax+1);
-        if(randomSpawn > randomSpawnMax-1)
+        if(randomSpawn > randomSpawnMax-3)
         {
             Instantiate(chest, this.gameObject.transform);
         }
