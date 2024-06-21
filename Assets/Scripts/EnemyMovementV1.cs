@@ -136,6 +136,7 @@ public class EnemyMovementV1 : MonoBehaviour
         }
         else
         {
+            anim.SetBool("isAttacking",false);
             anim.SetBool("isWalking", true);
             state = AiState.Patrol;
         }
@@ -151,7 +152,7 @@ public class EnemyMovementV1 : MonoBehaviour
             case AiState.Chase:
                 ChasePlayer();
                 anim.SetBool("isRunning", true);
-               
+                anim.SetBool("isAttacking",false);
                 break;
             case AiState.Flank:
                 FlankPlayer();
@@ -166,6 +167,7 @@ public class EnemyMovementV1 : MonoBehaviour
         attackDamage = Random.Range(attackDamageMin, attackDamageMax);
        PlayerController playerContoller = playerObject.GetComponent<PlayerController>();
         playerContoller.playerHealth -= attackDamage;
+        anim.SetBool("isAttacking", true);
     }
     public void OnSweepHit(float damageDone)
     {
@@ -192,6 +194,7 @@ public class EnemyMovementV1 : MonoBehaviour
         //randomly switch to flanking
         if(Random.Range(0,1000) == 200)
         {
+            anim.SetBool("isAttacking",false);
             isFlanking = true;
             anim.SetBool("isFlanking", true);
             anim.SetBool("isRunning", false);
@@ -202,6 +205,7 @@ public class EnemyMovementV1 : MonoBehaviour
         {
             agent.destination = playerObject.transform.position;
             anim.SetBool("isRunning", true);
+            anim.SetBool("isAttacking", false);
         }
         //close enough to attack. This is where to tell the enemy to attack!!!!!!!!!!!
         else if ((this.transform.position - playerObject.transform.position).magnitude < attackDistance)
