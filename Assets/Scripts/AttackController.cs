@@ -17,7 +17,7 @@ public class AttackController : MonoBehaviour
     private DetectHitSweep  detectSweep;
     private DetectHitStab detectStab;
     
-    Animator bswordfbx;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +35,7 @@ public class AttackController : MonoBehaviour
             isAttacking = true;
             stabAttack = true;
             doAttack = true;
-            bswordfbx.SetBool("isSweephit", true);
+            
         }
         if (stabAttack)
         {
@@ -55,7 +55,7 @@ public class AttackController : MonoBehaviour
             doAttack = false;
             stabAttackTime = 0;
             StabHitBox.SetActive(false);
-            bswordfbx.SetBool("isSweephit", false);
+          
         }
 
 
