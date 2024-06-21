@@ -14,7 +14,7 @@ public class LightingManagerScript : MonoBehaviour
     private Light DirectionalLight;
     [SerializeField]
     private LightingPresetScript preset;
-    [SerializeField, Range(0,24)]
+    [SerializeField, Range(0,80)]
     private float DayTime;
 
     private void Update()
@@ -32,9 +32,9 @@ public class LightingManagerScript : MonoBehaviour
         if(Application.isPlaying) 
         {
             DayTime += Time.deltaTime;
-            DayTime %= 24;
+            DayTime %= 80;
             //setting it between 0-24
-            UpdateLighting(DayTime / 24f);
+            UpdateLighting(DayTime / 80f);
             
         }
         else
