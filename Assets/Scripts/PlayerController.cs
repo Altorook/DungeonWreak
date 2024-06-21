@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
     GameObject inventoryCanvas;
     InventoryDisplay inventoryDisplay;
+    bool isInventoryOpen = false;
     bool inventoryOpen = false;
     float timeOpened = 0;
 
@@ -76,9 +77,13 @@ public class PlayerController : MonoBehaviour
         playerTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * mouseSens, 0));
         camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
 
-
+        if(Input.GetKeyDown(KeyCode.Tab))
+        {
+            isInventoryOpen = !isInventoryOpen;
+        }
         if (Input.GetKey(KeyCode.Tab) && Time.time - timeOpened > 0.1f)
         {
+            
             inventoryOpen = true;
             timeOpened = Time.time;
         }
@@ -86,6 +91,14 @@ public class PlayerController : MonoBehaviour
         {
             inventoryDisplay.updateInventory();
             inventoryOpen = false;
+        }
+        if (isInventoryOpen)
+        {
+            inventoryCanvas.SetActive(true);
+        }
+        else
+        {
+            inventoryCanvas.SetActive(false);
         }
     }
     public void FixedUpdate()

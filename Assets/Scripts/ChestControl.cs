@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using UnityEditor.Build;
+using TMPro;
 using UnityEngine;
 
 public class ChestControl : MonoBehaviour
@@ -22,11 +21,14 @@ public class ChestControl : MonoBehaviour
     int amountInChest;
     int framesSinceLooted = 0;
     bool lootCoolDown = false;
-    
+    InventoryDisplay inventoryDisplay;
+    GameObject inventoryCanvas;
     // Start is called before the first frame update
     void Start()
     {
-        
+        inventoryCanvas = GameObject.Find("InventoryCanvas");
+        inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
+
         canvasObject = GameObject.Find("Canvas");
         canvasHandler = canvasObject.GetComponent<CanvasHandler>();
         generateNewPool();
@@ -72,6 +74,7 @@ public class ChestControl : MonoBehaviour
         {
             if (other.gameObject.tag == "Player")
             {
+                this.GetComponentInChildren<TMP_Text>().SetText("OI");
                 canvasHandler.IsNearChest = true;
                 if (lootCoolDown)
                 {
@@ -90,7 +93,8 @@ public class ChestControl : MonoBehaviour
                     PlayerController playCont = other.gameObject.GetComponent<PlayerController>();
                     playCont.inventory[itemsInChest.ElementAt(0)]+=1;
                     itemsInChest.RemoveAt(0);
-                    if(itemsInChest.Count == 0)
+                    inventoryDisplay.updateInventory();
+                    if (itemsInChest.Count == 0)
                     {
                         canvasHandler.IsNearChest = false;
                         Destroy(this.gameObject); 
@@ -106,8 +110,10 @@ public class ChestControl : MonoBehaviour
         {
             if (other.gameObject.tag == "Player")
             {
+                this.GetComponentInChildren<TMP_Text>().SetText("");
                 canvasHandler.IsNearChest = false;
             }
         }
     }
+
 }
