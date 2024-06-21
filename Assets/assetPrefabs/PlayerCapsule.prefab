@@ -28,12 +28,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 386910212371490959}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.37, z: 2.35}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.44199976, z: 2.35}
   m_LocalScale: {x: 0.28808, y: 0.27, z: 3.4968}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7714850919077585363}
+  m_Father: {fileID: 2551751313753832644}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7816525740720465519
 MeshFilter:
@@ -119,6 +119,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hitCoolDown: 0
+  stabAttackTime: 0.2
+  stabAttackCurrentTime: 0
+  isAttacking: 0
 --- !u!1 &1284539267891862967
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,7 +214,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.812, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3352166733160957716}
+  - {fileID: 7556176067388859403}
   m_Father: {fileID: 7714850919077585363}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &2074415464085368787
@@ -301,12 +306,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6379108117254136306}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.281, z: 2.89}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.53099984, z: 2.89}
   m_LocalScale: {x: 2.8675368, y: 0.17274, z: 3.316234}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 7714850919077585363}
+  m_Father: {fileID: 2551751313753832644}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3768286686353158732
 MeshFilter:
@@ -430,8 +435,6 @@ Transform:
   - {fileID: 2551751313753832644}
   - {fileID: 8047973262408507066}
   - {fileID: 7262865423008081202}
-  - {fileID: 7556176067388859403}
-  - {fileID: 3352166733160957716}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1210889183723102727
