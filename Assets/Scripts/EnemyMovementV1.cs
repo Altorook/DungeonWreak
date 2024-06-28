@@ -39,6 +39,8 @@ public class EnemyMovementV1 : MonoBehaviour
     [SerializeField] float chaseSpeed = 9;
     [SerializeField] float patrolSpeed = 2;
 
+    enum AiState { Patrol, Chase, Attack,Flank } // ...
+
     //idrk but switch state stuff ig
     [SerializeField]
     AiState state = AiState.Patrol;
@@ -63,8 +65,13 @@ public class EnemyMovementV1 : MonoBehaviour
     [SerializeField]
     TMP_Text healthText;
     // Start is called before the first frame update
+
+    Animator anim;
     void Start()
     {
+
+        anim = GetComponentInChildren<Animator>();
+
        //starts the enemies on a random patrol point
         currentPatrolPoint = Random.Range(0, patrolPoints.Count - 1);
 
@@ -92,7 +99,10 @@ public class EnemyMovementV1 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if((this.transform.position - playerObject.transform.position).magnitude < attackDistance + 2)
+        float distanceToPlayer = Vector3.Distance(transform.position, playerObject.transform.position);
+
+
+        if ((this.transform.position - playerObject.transform.position).magnitude < attackDistance + 2)
         {
             if (attackTime <= attackSpeed)
             {
@@ -119,6 +129,7 @@ public class EnemyMovementV1 : MonoBehaviour
         //if player is closer than distance to lose (Also to alert, same thing) decide based  on isFlanking to either flank or standard chase. If further than distance to lose, revert to patrol
         if((this.transform.position - playerObject.transform.position).magnitude < distanceToLose)
         {
+
             if (isFlanking)
             {
                 state = AiState.Flank;
@@ -130,22 +141,58 @@ public class EnemyMovementV1 : MonoBehaviour
         }
         else
         {
+           
             state = AiState.Patrol;
         }
+
+
+        UpdateAnimationState();
 
         //switch state stuff
         switch (state)
         {
             case AiState.Patrol:
                 PatrolState();
+                
                 break;
             case AiState.Chase:
                 ChasePlayer();
+                if (distanceToPlayer < attackDistance)
+                {
+                    state = AiState.Attack;
+                }
                 break;
             case AiState.Flank:
                 FlankPlayer();
+              
                 break;
+            case AiState.Attack:
+                AttackPlayer();
+                if (distanceToPlayer > attackDistance)
+                {
+                    state = AiState.Chase;
+                    anim.SetBool("isAttacking", false);
 
+                }
+               
+                break;
+        }
+    }
+    void AttackPlayer()
+    {
+        if (attackTime <= attackSpeed)
+        {
+            attackTime += Time.deltaTime;
+        }
+        else
+        {
+            anim.SetBool("isWalking",false);
+            anim.SetBool("isRunning", false);
+            anim.SetBool("isAttacking", true);
+            anim.SetTrigger("StopFlank");
+
+            attackTime = 0;
+            DoAttack();
         }
     }
     public void DoAttack()
@@ -154,6 +201,7 @@ public class EnemyMovementV1 : MonoBehaviour
         attackDamage = Random.Range(attackDamageMin, attackDamageMax);
        PlayerController playerContoller = playerObject.GetComponent<PlayerController>();
         playerContoller.playerHealth -= attackDamage;
+        
     }
     public void OnSweepHit(float damageDone)
     {
@@ -180,24 +228,28 @@ public class EnemyMovementV1 : MonoBehaviour
         //randomly switch to flanking
         if(Random.Range(0,1000) == 200)
         {
+            anim.SetTrigger("StartFlank");
             isFlanking = true;
+           
         }
-
+      
         //chase player
         if ((this.transform.position - playerObject.transform.position).magnitude < distanceToLose && (this.transform.position - playerObject.transform.position).magnitude > attackDistance)
         {
             agent.destination = playerObject.transform.position;
+            
         }
         //close enough to attack. This is where to tell the enemy to attack!!!!!!!!!!!
         else if ((this.transform.position - playerObject.transform.position).magnitude < attackDistance)
         {
             //actually somewhere in here but you get it
             agent.destination = this.transform.position;
-            
+            anim.SetBool("isAttacking", true);
         }
         else
         {
             agent.destination = this.transform.position;
+            anim.SetBool("isRunning", true);
         }
     }
     private void PatrolState()
@@ -205,10 +257,12 @@ public class EnemyMovementV1 : MonoBehaviour
         agent.speed = patrolSpeed;
         //tells the ai which patrol point to head to
         agent.destination = patrolPoints.ElementAt(currentPatrolPoint).transform.position;
+       
         //checks if the enemy is close enough to a patrol point to start to idle
         if ((this.transform.position - patrolPoints.ElementAt(currentPatrolPoint).transform.position).magnitude < 3)
         {
             startTimer = true;
+
         }
         //holds how long the player idles for
         if (startTimer)
@@ -239,12 +293,14 @@ public class EnemyMovementV1 : MonoBehaviour
             }
             //stops the enemy from constatly changing sides
             changeFlank = false;
+            anim.SetBool("isRunning", true);
         }
         agent.speed = chaseSpeed;
         //randomly switches back to chase standard
         if (Random.Range(0, 3000) == 20)
         {
             isFlanking = false;
+            anim.SetTrigger("StopFlank");
         }
         if ((this.transform.position - playerObject.transform.position).magnitude < distanceToLose && (this.transform.position - playerObject.transform.position).magnitude > attackDistance)
         {
@@ -268,5 +324,11 @@ public class EnemyMovementV1 : MonoBehaviour
             isFlanking = false;
         }
         
+    }
+    private void UpdateAnimationState()
+    {
+        anim.SetBool("isWalking", state == AiState.Patrol);
+        anim.SetBool("isRunning", state == AiState.Chase || state == AiState.Flank);
+        anim.SetBool("isAttacking", state == AiState.Chase && Vector3.Distance(transform.position, playerObject.transform.position) <= attackDistance);
     }
 }

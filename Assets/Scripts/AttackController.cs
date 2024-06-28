@@ -16,9 +16,13 @@ public class AttackController : MonoBehaviour
     private float stabTime = 0.6f;
     private DetectHitSweep  detectSweep;
     private DetectHitStab detectStab;
+    
+    
     // Start is called before the first frame update
     void Start()
     {
+        Animator bswordfbx = GetComponent<Animator>();
+
         detectSweep = SweepHitBox.GetComponent<DetectHitSweep>();
         detectStab = StabHitBox.GetComponent<DetectHitStab>();
     }
@@ -31,6 +35,7 @@ public class AttackController : MonoBehaviour
             isAttacking = true;
             stabAttack = true;
             doAttack = true;
+            
         }
         if (stabAttack)
         {
@@ -50,6 +55,7 @@ public class AttackController : MonoBehaviour
             doAttack = false;
             stabAttackTime = 0;
             StabHitBox.SetActive(false);
+          
         }
 
 
