@@ -14,16 +14,26 @@ void Start()
     // Update is called once per frame
     void Update()
     {
+        if (sanimate == null)
+        {
+            return; // Exit if Animator is not found
+        }
+
         if (Input.GetMouseButton(0))
         {
             sanimate.SetBool("isSweeping", true);
             sanimate.SetBool("isStabbing", false);
         }
-        
-        if (Input.GetMouseButton(1) )
+        else if (Input.GetMouseButton(1))
         {
             sanimate.SetBool("isSweeping", false);
             sanimate.SetBool("isStabbing", true);
+        }
+        else
+        {
+            // Reset animations when no mouse button is pressed
+            sanimate.SetBool("isSweeping", false);
+            sanimate.SetBool("isStabbing", false);
         }
     }
 }

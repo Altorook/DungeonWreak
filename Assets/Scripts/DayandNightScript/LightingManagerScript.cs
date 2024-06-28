@@ -14,76 +14,65 @@ public class LightingManagerScript : MonoBehaviour
     private Light DirectionalLight;
     [SerializeField]
     private LightingPresetScript preset;
-    [SerializeField, Range(0,80)]
-    private float DayTime;
+    [SerializeField, Range(8, 24)]
+    private float DayTime = 12;  // Starting at 12 (noon) to simulate starting with day
+
+    private const float dayDurationInSeconds = 1800f;  // 30 minutes * 60 seconds
 
     private void Update()
     {
-        //to set the angle
-
-        if(preset == null)
+        if (preset == null)
         {
             return;
-            //if its not assigned
         }
 
-        //setting it if the time is playing
-
-        if(Application.isPlaying) 
+        if (Application.isPlaying)
         {
-            DayTime += Time.deltaTime;
-            DayTime %= 80;
-            //setting it between 0-24
-            UpdateLighting(DayTime / 80f);
-            
+            DayTime += (Time.deltaTime / dayDurationInSeconds) * 24f; // Adjust time based on 30-minute day
+            DayTime %= 24; // Ensure time stays within 0-24 hours
+            UpdateLighting(DayTime / 24f);
         }
         else
         {
-
             UpdateLighting(DayTime / 24f);
-           
-        }
-
-    }
-    private void UpdateLighting(float timeper)
-        {
-
-         RenderSettings.ambientLight = preset.Ambientcolor.Evaluate(timeper);
-         RenderSettings.fogColor = preset.FogColor.Evaluate(timeper);
-
-        //to check we got the light or not then color and rotation set
-
-        if(DirectionalLight != null) 
-        {
-            DirectionalLight.color = preset.DirectionalColor.Evaluate(timeper);
-
-            DirectionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timeper * 360f) - 90f, -170, 0));
         }
     }
+
+    private void UpdateLighting(float timePercentage)
+    {
+        RenderSettings.ambientLight = preset.Ambientcolor.Evaluate(timePercentage);
+        RenderSettings.fogColor = preset.FogColor.Evaluate(timePercentage);
+
+        if (DirectionalLight != null)
+        {
+            DirectionalLight.color = preset.DirectionalColor.Evaluate(timePercentage);
+            DirectionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercentage * 360f) - 90f, -170, 0));
+        }
+    }
+
     private void OnValidate()
     {
         if (DirectionalLight != null)
         {
             return;
         }
-        //to find the first light in the scene we can get
 
-        if (RenderSettings.sun!=null) 
+        if (RenderSettings.sun != null)
         {
             DirectionalLight = RenderSettings.sun;
         }
         else
         {
             Light[] lights = GameObject.FindObjectsOfType<Light>();
-            foreach(Light light in lights)
+            foreach (Light light in lights)
             {
-                if(light.type == LightType.Directional) 
+                if (light.type == LightType.Directional)
                 {
-                 DirectionalLight = light;
+                    DirectionalLight = light;
                     return;
                 }
             }
         }
     }
-   
+
 }
