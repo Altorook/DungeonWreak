@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 
   
     public List<int> inventory = new List<int>();
-    int totalItemsInGame = 20;
+   public int totalItemsInGame = 20;
 
    public bool isSprinting = false;
 
@@ -105,24 +105,7 @@ public class PlayerController : MonoBehaviour
             inventoryCanvas.SetActive(false);
         }
     }
-    public void FixedUpdate()
-    {
-        Vector3 relativeVelocity;
-        if (isSprinting)
-        {
-             relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * sprintSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * sprintSpeed);
-        }
-        else
-        {
-             relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * playerSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * playerSpeed);
-        }
-        
-        playerRigidbody.velocity = relativeVelocity;
-        if (isGrounded && Input.GetKey(KeyCode.Space))
-        {
-            playerRigidbody.AddForce(new Vector3(0, jumpHeight, 0));
-        }
-    }
+    
     private void HandleSprint()
     {
         if(Input.GetKey(KeyCode.LeftShift)&&stamina>0)
@@ -151,15 +134,24 @@ public class PlayerController : MonoBehaviour
             isSprinting = false;
         }
     }
- 
-    
-   
-    
-    
-    public void SetGrounded(bool groundState)
+
+    private void FixedUpdate()
     {
-        isGrounded = groundState;
+        Debug.Log("run");
+        Vector3 relativeVelocity;
+
+        if (isSprinting)
+        {
+            relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * sprintSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * sprintSpeed);
+        }
+        else
+        {
+            relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * playerSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * playerSpeed);
+        }
+        Debug.Log(relativeVelocity);
+        playerRigidbody.velocity = relativeVelocity;
+
     }
-  
+
 
 }

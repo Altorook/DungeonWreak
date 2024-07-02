@@ -8,7 +8,7 @@ using UnityEngine;
 public class InventoryDisplay : MonoBehaviour
 {
     [SerializeField]
-    GameObject inventorySlotPrefab;
+   public GameObject inventorySlotPrefab;
     [SerializeField]
     GameObject playerObject;
     public List<GameObject> itemList = new List<GameObject>();
@@ -25,6 +25,10 @@ public class InventoryDisplay : MonoBehaviour
     void Update()
     {
         
+    }
+    void FixedUpdate()
+    {
+        Debug.Log("?");
     }
     public void updateInventory()
     {
@@ -49,7 +53,7 @@ public class InventoryDisplay : MonoBehaviour
             }
         }
     }
-    string getItemName(int itemNumID)
+   public string getItemName(int itemNumID)
     {
         if(itemNumID == 0)
         {
