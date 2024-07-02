@@ -77,17 +77,21 @@ public class PlayerController : MonoBehaviour
         playerTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * mouseSens, 0));
         camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
 
-        if(Input.GetKeyDown(KeyCode.Tab))
+        HandleInventory();
+    }
+    public void HandleInventory()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             isInventoryOpen = !isInventoryOpen;
         }
         if (Input.GetKey(KeyCode.Tab) && Time.time - timeOpened > 0.1f)
         {
-            
+
             inventoryOpen = true;
             timeOpened = Time.time;
         }
-        if(inventoryOpen) 
+        if (inventoryOpen)
         {
             inventoryDisplay.updateInventory();
             inventoryOpen = false;

@@ -8,11 +8,18 @@ public class ChestControl : MonoBehaviour
 {
     GameObject canvasObject;
     CanvasHandler canvasHandler;
-    int amountOfBones = 6;
-    int amountOfMeat = 4;
-    int amountOfLeather = 3;
-    int amountOfIron = 2;
-    int amountOfSwords = 1;
+    int amountOfBones = 8;
+    int amountOfMeat = 6;
+    int amountOfLeather = 5;
+    int amountOfIron = 3;
+    int amountOfSwords = 2;
+    int amountOfCopper = 5;
+    int amountOfWood = 7;
+    int amountOfCloth = 4;
+    int amountOfTea = 5;
+    int amountOfPainting = 1;
+    int amountOfSpork = 3;
+    int amountOfMagazines = 3;
     [SerializeField]
     List<int> itemPool = new List<int>();
     public List<int> itemsInChest= new List<int>();
@@ -66,6 +73,34 @@ public class ChestControl : MonoBehaviour
         for (int i = 0; i < amountOfSwords; i++)
         {
             itemPool.Add(4);
+        }
+        for (int i = 0;i < amountOfCopper; i++)
+        {
+            itemPool.Add(5);
+        }
+        for (int i = 0; i < amountOfWood; i++)
+        {
+            itemPool.Add(6);
+        }
+        for (int i = 0; i < amountOfCloth; i++)
+        {
+            itemPool.Add(7);
+        }
+        for (int i = 0; i < amountOfTea; i++)
+        {
+            itemPool.Add(8);
+        }
+        for (int i = 0; i < amountOfPainting; i++)
+        {
+            itemPool.Add(9);
+        }
+        for (int i = 0; i < amountOfSpork; i++)
+        {
+            itemPool.Add(10);
+        }
+        for (int i = 0; i < amountOfMagazines; i++)
+        {
+            itemPool.Add(11);
         }
     }
     public void OnTriggerStay(Collider other)

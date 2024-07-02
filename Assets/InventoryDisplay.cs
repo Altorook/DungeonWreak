@@ -56,16 +56,45 @@ public class InventoryDisplay : MonoBehaviour
             return "Bone";
         }else if(itemNumID == 1)
         {
-            return "Meat";
+            return "Meat?";
         }else if (itemNumID == 2)
         {
-            return "Leather";
+            return "Hide";
         }else if (itemNumID == 3)
             {
             return "Iron";
         }else if (itemNumID == 4)
         {
             return "Broken Swords";
+        }
+        else if (itemNumID == 5)
+        {
+            return "Copper";
+        }
+        else if (itemNumID == 6)
+        {
+            return "Wood";
+        }
+        else if (itemNumID == 7)
+        {
+            return "Cloth";
+        }
+        else if (itemNumID == 8)
+        {
+            return "Tea";
+        }
+        else if (itemNumID == 9)
+        {
+            return "Painting";
+        }
+        else if (itemNumID == 10)
+        {
+            return "Spork";
+        }
+        else if (itemNumID == 11
+            )
+        {
+            return "\"Magazines\"";
         }
         else
         {
