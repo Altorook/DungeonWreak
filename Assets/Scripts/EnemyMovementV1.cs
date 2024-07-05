@@ -162,14 +162,15 @@ public class EnemyMovementV1 : MonoBehaviour
                 {
                     state = AiState.Attack;
                 }
+                FacePlayer();
                 break;
             case AiState.Flank:
                 FlankPlayer();
-              
+                FacePlayer();
                 break;
             case AiState.Attack:
                 AttackPlayer();
-                
+                FacePlayer();
                 if (distanceToPlayer > attackDistance)
                 {
                     state = AiState.Chase;
@@ -245,6 +246,19 @@ public class EnemyMovementV1 : MonoBehaviour
         {
             agent.destination = this.transform.position;
         }
+    }
+    private void FacePlayer()
+    {
+       
+        Vector3 directionToPlayer = playerObject.transform.position - this.transform.position;
+        directionToPlayer.y = 0; 
+
+       
+        Quaternion targetRotation = Quaternion.LookRotation(directionToPlayer);
+
+        
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+
     }
     private void PatrolState()
     {
