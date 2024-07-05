@@ -128,7 +128,10 @@ public class ChestControl : MonoBehaviour
                     PlayerController playCont = other.gameObject.GetComponent<PlayerController>();
                     playCont.inventory[itemsInChest.ElementAt(0)]+=1;
                     itemsInChest.RemoveAt(0);
-                    inventoryDisplay.updateInventory();
+                    if (inventoryDisplay.isActiveAndEnabled)
+                    {   
+                        inventoryDisplay.updateInventory();
+                    }
                     if (itemsInChest.Count == 0)
                     {
                         canvasHandler.IsNearChest = false;

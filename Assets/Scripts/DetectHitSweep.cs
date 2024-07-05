@@ -22,9 +22,11 @@ public class DetectHitSweep : MonoBehaviour
     }
     public void OnTriggerEnter(Collider other)
     {
-        otherEnemyMovement = other.gameObject.GetComponent<EnemyMovementV1>();
-        damageDealt = Random.Range(sweepDamageMin, sweepDamageMax);
-        otherEnemyMovement.OnSweepHit(damageDealt);
-        
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            otherEnemyMovement = other.gameObject.GetComponent<EnemyMovementV1>();
+            damageDealt = Random.Range(sweepDamageMin, sweepDamageMax);
+            otherEnemyMovement.OnSweepHit(damageDealt);
+        }
     }
 }

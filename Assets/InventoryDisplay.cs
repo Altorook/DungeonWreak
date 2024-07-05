@@ -13,6 +13,8 @@ public class InventoryDisplay : MonoBehaviour
     GameObject playerObject;
     public List<GameObject> itemList = new List<GameObject>();
     PlayerController playerController;
+
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +30,7 @@ public class InventoryDisplay : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Debug.Log("?");
+      
     }
     public void updateInventory()
     {
@@ -46,8 +48,9 @@ public class InventoryDisplay : MonoBehaviour
             if(playerController.inventory.ElementAt(indexKMS) != 0)
             {
                 itemList.Add(Instantiate(inventorySlotPrefab));
-                itemList.ElementAt(indexOfThis).transform.parent = this.transform;
-                itemList.ElementAt(indexOfThis).transform.GetChild(0).GetComponent<TMP_Text>().SetText( getItemName(indexKMS)+" "+"{0}",playerController.inventory.ElementAt(indexKMS));
+                itemList.ElementAt(indexOfThis).transform.SetParent(this.transform);
+                itemList.ElementAt(indexOfThis).GetComponent<InventoryItemData>().setInfo(indexKMS, playerController.inventory.ElementAt(indexKMS));
+                itemList.ElementAt(indexOfThis).transform.GetChild(1).GetComponent<TMP_Text>().SetText( getItemName(indexKMS)+" "+"{0}",playerController.inventory.ElementAt(indexKMS));
                 indexOfThis++;
                
             }

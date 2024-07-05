@@ -35,14 +35,17 @@ public class DetectHitStab : MonoBehaviour
     }
     public void OnTriggerEnter(Collider other)
     {
-        
-        if(stabAttackCurrentTime < stabAttackTime && isAttacking == false)
+        if (other.gameObject.CompareTag("Enemy"))
         {
-            otherEnemyMovement = other.gameObject.GetComponent<EnemyMovementV1>();
-            damageDealt = Random.Range(stabDamageMin, stabDamageMax);
-            otherEnemyMovement.OnStabHit(damageDealt);
-            isAttacking = true;
+            if (stabAttackCurrentTime < stabAttackTime && isAttacking == false)
+            {
+                otherEnemyMovement = other.gameObject.GetComponent<EnemyMovementV1>();
+                damageDealt = Random.Range(stabDamageMin, stabDamageMax);
+                otherEnemyMovement.OnStabHit(damageDealt);
+                isAttacking = true;
+            }
         }
+        
         
     }
 }

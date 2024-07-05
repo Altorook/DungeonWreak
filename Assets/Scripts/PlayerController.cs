@@ -36,25 +36,39 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     float mouseYRotation = 0;
 
-  
+    [SerializeField]
+    GameObject gameManagerObject;
+    GameManager gameManager;
     public List<int> inventory = new List<int>();
    public int totalItemsInGame = 20;
 
    public bool isSprinting = false;
 
     public float playerHealth = 100;
+    float checkIfHealthChanged;
     TMP_Text healthText;
     // Start is called before the first frame update
 
 
     GameObject inventoryCanvas;
     InventoryDisplay inventoryDisplay;
-    bool isInventoryOpen = false;
+   public bool isInventoryOpen = false;
     bool inventoryOpen = false;
     float timeOpened = 0;
 
+    public bool menuOpen = false;
+    [SerializeField]
+    GameObject storageCanvas;
+    StorageInventory storageInventory;
+
+    [SerializeField]
+    GameObject shopCanvas;
+   public bool isShopOpen = false;
     void Start()
     {
+        gameManager = gameManagerObject.GetComponent<GameManager>();
+        gameManager.SetHealth(playerHealth);
+        checkIfHealthChanged = playerHealth;
         inventoryCanvas = GameObject.Find("InventoryCanvas");
         inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
 
@@ -63,13 +77,72 @@ public class PlayerController : MonoBehaviour
         {
             inventory.Add(0);
         }
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = true;
-    }
 
+        storageCanvas.SetActive(true);
+        storageInventory = storageCanvas.GetComponent<StorageInventory>();
+        storageCanvas.SetActive(false);
+    }
+ void HandleStorageUI()
+    {
+        storageCanvas.SetActive(true);
+        shopCanvas.SetActive(true);
+        storageInventory = storageCanvas.GetComponent<StorageInventory>();
+        storageInventory.isStorageOpen = !storageInventory.isStorageOpen;
+        storageInventory.UpdateStorageInventory();
+        storageCanvas.SetActive(storageInventory.isStorageOpen);
+        if (storageInventory.isStorageOpen)
+        {
+            isShopOpen = !storageInventory.isStorageOpen;
+        }
+        
+    }
     // Update is called once per frame
     void Update()
     {
+
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            HandleStorageUI();
+        }
+        if (Input.GetKeyUp(KeyCode.O))
+        {
+            isShopOpen = !isShopOpen;
+            storageCanvas.SetActive(isShopOpen);
+            shopCanvas.SetActive(isShopOpen);
+            if (isShopOpen)
+            {
+                storageInventory.isStorageOpen = !isShopOpen;
+            }
+        }
+
+        if (storageInventory.isStorageOpen || isShopOpen || isInventoryOpen)
+        {
+            menuOpen = true;
+        }
+        else
+        {
+            menuOpen = false;
+        }
+
+        if(checkIfHealthChanged != playerHealth)
+        {
+            gameManager.SetHealth(playerHealth);
+            checkIfHealthChanged = playerHealth;
+        }
+      
+         
+        if (menuOpen)
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+        }
+        else
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.visible = false;
+        }
+
+
         healthText.SetText(playerHealth.ToString());
         HandleSprint();
         mouseYRotation -= Input.GetAxis("Mouse Y") * mouseSens;
@@ -84,6 +157,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             isInventoryOpen = !isInventoryOpen;
+            menuOpen = !menuOpen;
         }
         if (Input.GetKey(KeyCode.Tab) && Time.time - timeOpened > 0.1f)
         {
@@ -137,7 +211,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log("run");
+       
         Vector3 relativeVelocity;
 
         if (isSprinting)
@@ -148,7 +222,6 @@ public class PlayerController : MonoBehaviour
         {
             relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * playerSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * playerSpeed);
         }
-        Debug.Log(relativeVelocity);
         playerRigidbody.velocity = relativeVelocity;
 
     }
