@@ -40,14 +40,14 @@ public class PlayerController : MonoBehaviour
     GameObject gameManagerObject;
     GameManager gameManager;
     public List<int> inventory = new List<int>();
-   public int totalItemsInGame = 20;
+    public int totalItemsInGame = 20;
 
-   public bool isSprinting = false;
+    public bool isSprinting = false;
 
     public float playerHealth = 100;
     float checkIfHealthChanged;
     TMP_Text healthText;
-    // Start is called before the first frame update
+    
 
 
     GameObject inventoryCanvas;
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     GameObject shopCanvas;
-   public bool isShopOpen = false;
+    public bool isShopOpen = false;
     void Start()
     {
         gameManager = gameManagerObject.GetComponent<GameManager>();

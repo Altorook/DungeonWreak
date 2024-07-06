@@ -6,151 +6,136 @@ using UnityEngine;
 
 public class ChestControl : MonoBehaviour
 {
-    GameObject canvasObject;
-    CanvasHandler canvasHandler;
-    int amountOfBones = 8;
-    int amountOfMeat = 6;
-    int amountOfLeather = 5;
-    int amountOfIron = 3;
-    int amountOfSwords = 2;
-    int amountOfCopper = 5;
-    int amountOfWood = 7;
-    int amountOfCloth = 4;
-    int amountOfTea = 5;
-    int amountOfPainting = 1;
-    int amountOfSpork = 3;
-    int amountOfMagazines = 3;
-    [SerializeField]
-    List<int> itemPool = new List<int>();
-    public List<int> itemsInChest= new List<int>();
-    int minItemsInChest = 3;
-    int maxItemsInChest = 5;
-    int amountInChest;
-    int framesSinceLooted = 0;
-    bool lootCoolDown = false;
-    InventoryDisplay inventoryDisplay;
-    GameObject inventoryCanvas;
-    // Start is called before the first frame update
+   
+    [SerializeField] private GameObject canvasObject;
+    [SerializeField] private CanvasHandler canvasHandler;
+    [SerializeField] private InventoryDisplay inventoryDisplay;
+    [SerializeField] private GameObject inventoryCanvas;
+    [SerializeField] private TMP_Text chestText;
+    [SerializeField] private List<int> itemPool = new List<int>();
+    [SerializeField] private List<int> itemsInChest = new List<int>();
+
+    // Item amounts
+    private readonly Dictionary<int, int> itemAmounts = new Dictionary<int, int>
+    {
+        {0, 8}, // Bones
+        {1, 6}, // Meat
+        {2, 5}, // Leather
+        {3, 3}, // Iron
+        {4, 2}, // Swords
+        {5, 5}, // Copper
+        {6, 7}, // Wood
+        {7, 4}, // Cloth
+        {8, 5}, // Tea
+        {9, 1}, // Painting
+        {10, 3}, // Spork
+        {11, 3} // Magazines
+    };
+
+   
+    private const int MinItemsInChest = 3;
+    private const int MaxItemsInChest = 5;
+    private int amountInChest;
+    private bool lootCoolDown = false;
+    private float lootCoolDownTime = 1.0f;
+    private float lastLootedTime = 0f;
+
+   
     void Start()
     {
-        inventoryCanvas = GameObject.Find("InventoryCanvas");
-        inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
+        
+        if (inventoryCanvas == null)
+        {
+            inventoryCanvas = GameObject.Find("InventoryCanvas");
+        }
+        if (inventoryDisplay == null && inventoryCanvas != null)
+        {
+            inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
+        }
 
-        canvasObject = GameObject.Find("Canvas");
-        canvasHandler = canvasObject.GetComponent<CanvasHandler>();
-        generateNewPool();
-        amountInChest = Random.Range(minItemsInChest, maxItemsInChest);
+        if (canvasObject == null)
+        {
+            canvasObject = GameObject.Find("Canvas");
+        }
+        if (canvasHandler == null && canvasObject != null)
+        {
+            canvasHandler = canvasObject.GetComponent<CanvasHandler>();
+        }
+
+       
+        GenerateNewPool();
+
+        
+        amountInChest = Random.Range(MinItemsInChest, MaxItemsInChest);
         for (int i = 0; i < amountInChest; i++)
         {
-            itemsInChest.Add(itemPool.ElementAt(Random.Range(0, itemPool.Count)));
+            itemsInChest.Add(itemPool[Random.Range(0, itemPool.Count)]);
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void GenerateNewPool()
+    {
+        itemPool.Clear();
+
+        foreach (var item in itemAmounts)
+        {
+            for (int i = 0; i < item.Value; i++)
+            {
+                itemPool.Add(item.Key);
+            }
+        }
+    }
+
+    
+    private void OnTriggerStay(Collider other)
     {
         
-    }
-    void generateNewPool()
-    {itemPool.Clear();
-       
-        for(int i = 0; i < amountOfBones; i++) 
+        if (other == null || other.gameObject.tag != "Player") return;
+
+        canvasHandler.IsNearChest = true;
+        
+
+        if (lootCoolDown && Time.time - lastLootedTime < lootCoolDownTime) return;
+
+        if (Input.GetKey(KeyCode.E))
         {
-            itemPool.Add(0);
-        }
-        for (int i = 0; i < amountOfMeat; i++)
-        {
-            itemPool.Add(1);
-        }
-        for (int i = 0; i < amountOfLeather; i++)
-        {
-            itemPool.Add(2);
-        }
-        for (int i = 0; i < amountOfIron; i++)
-        {
-            itemPool.Add(3);
-        }
-        for (int i = 0; i < amountOfSwords; i++)
-        {
-            itemPool.Add(4);
-        }
-        for (int i = 0;i < amountOfCopper; i++)
-        {
-            itemPool.Add(5);
-        }
-        for (int i = 0; i < amountOfWood; i++)
-        {
-            itemPool.Add(6);
-        }
-        for (int i = 0; i < amountOfCloth; i++)
-        {
-            itemPool.Add(7);
-        }
-        for (int i = 0; i < amountOfTea; i++)
-        {
-            itemPool.Add(8);
-        }
-        for (int i = 0; i < amountOfPainting; i++)
-        {
-            itemPool.Add(9);
-        }
-        for (int i = 0; i < amountOfSpork; i++)
-        {
-            itemPool.Add(10);
-        }
-        for (int i = 0; i < amountOfMagazines; i++)
-        {
-            itemPool.Add(11);
+            LootChest(other.gameObject);
         }
     }
-    public void OnTriggerStay(Collider other)
+
+    
+    private void OnTriggerExit(Collider other)
     {
-        if (other != null)
-        {
-            if (other.gameObject.tag == "Player")
-            {
-                this.GetComponentInChildren<TMP_Text>().SetText("OI");
-                canvasHandler.IsNearChest = true;
-                if (lootCoolDown)
-                {
-                    framesSinceLooted++;
-                    if(framesSinceLooted > 23)
-                    {
-                        framesSinceLooted = 0;
-                        lootCoolDown = false;
-                    }
-                }
-                if (Input.GetKey(KeyCode.E) && lootCoolDown == false)
-                {
-                    
-                    
-                    lootCoolDown = true;
-                    PlayerController playCont = other.gameObject.GetComponent<PlayerController>();
-                    playCont.inventory[itemsInChest.ElementAt(0)]+=1;
-                    itemsInChest.RemoveAt(0);
-                    if (inventoryDisplay.isActiveAndEnabled)
-                    {   
-                        inventoryDisplay.updateInventory();
-                    }
-                    if (itemsInChest.Count == 0)
-                    {
-                        canvasHandler.IsNearChest = false;
-                        Destroy(this.gameObject); 
-                    }
-                   
-                }
-            }
-        }
+        if (other == null || other.gameObject.tag != "Player") return;
+
+        
+        canvasHandler.IsNearChest = false;
     }
-    public void OnTriggerExit(Collider other)
+
+  
+    private void LootChest(GameObject player)
     {
-        if (other != null)
+        if (itemsInChest.Count == 0) return;
+
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        if (playerController == null) return;
+
+        int itemId = itemsInChest[0];
+        playerController.inventory[itemId] += 1;
+        itemsInChest.RemoveAt(0);
+
+        if (inventoryDisplay != null && inventoryDisplay.isActiveAndEnabled)
         {
-            if (other.gameObject.tag == "Player")
-            {
-                this.GetComponentInChildren<TMP_Text>().SetText("");
-                canvasHandler.IsNearChest = false;
-            }
+            inventoryDisplay.updateInventory();
+        }
+
+        lastLootedTime = Time.time;
+        lootCoolDown = true;
+
+        if (itemsInChest.Count == 0)
+        {
+            canvasHandler.IsNearChest = false;
+            Destroy(gameObject);
         }
     }
 
