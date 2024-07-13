@@ -36,7 +36,6 @@ public class Player1Controller : MonoBehaviour
     public float stamina = 1000f;
 
     private Vector3 _movementDirection;
-
     private void OnEnable()
     {
         inputManager.onMove += OnMove;
@@ -139,7 +138,7 @@ public class Player1Controller : MonoBehaviour
     }
 
 
-  
+
 
 
 }

@@ -12,7 +12,7 @@ public class InputManager : MonoBehaviour
     public event Action<bool> onOpenShop;
     public event Action<bool> onHiddenInventory;
     public event Action<bool> onSprint;
-
+    public event Action onChestInteract;
     public Vector2 moveInput;
 
     private void OnEnable()
@@ -35,6 +35,8 @@ public class InputManager : MonoBehaviour
         playerInput.Interact.StorageUI.performed += OnStorageUI;
         playerInput.Interact.OpenShop.performed += OnOpenShop;
         playerInput.Interact.HandleInventory.performed += OnHiddenInventory;
+        playerInput.Interact.ChestInteract.performed += OnChestInteract;
+
 
         playerInput.Enable();
 
@@ -42,6 +44,11 @@ public class InputManager : MonoBehaviour
     private void OnMove(InputAction.CallbackContext context)
     {
         onMove?.Invoke(context.ReadValue<Vector2>());
+    }
+
+ private void OnChestInteract(InputAction.CallbackContext context) 
+    {
+        onChestInteract?.Invoke(); //
     }
 
     private void OnSprint(InputAction.CallbackContext context)

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Cursor = UnityEngine.Cursor;
 
 public class InventoryScript : MonoBehaviour
 {
@@ -30,12 +31,14 @@ private InputManager inputManager;
     public bool menuOpen = false;
     public float playerHealth = 100;
 
+    public ChestControl currentChest;
+
     // Start is called before the first frame update
     void Start()
     {
         InitializeInventory();
         InitializeStorage();
-        UnityEngine.Cursor.visible = false;
+        Cursor.visible = false;
     }
 
     void InitializeInventory()
@@ -82,30 +85,41 @@ private InputManager inputManager;
     {
         if (isShopOpen || storageInventory.isStorageOpen || isInventoryOpen)
         {
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-            UnityEngine.Cursor.visible = true;
+           Cursor.lockState = CursorLockMode.None;
+           Cursor.visible = true;
         }
         else
         {
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-            UnityEngine.Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 
     private void OnEnable()
     {
+        inputManager.onChestInteract += OpenChest;
         inputManager.onUseRMB += OnStorageUI;
         inputManager.onUseLMB += OnToggleInventory;
-        inputManager.onUseLMB += OnOpenShop;
+        inputManager.onOpenShop += OnOpenShop;
     }
 
     private void OnDisable()
     {
+        inputManager.onChestInteract += OpenChest;
+
         inputManager.onUseRMB -= OnStorageUI;
         inputManager.onUseLMB -= OnToggleInventory;
         inputManager.onUseLMB -= OnOpenShop;
     }
 
+
+    private void OpenChest()
+    {
+        if (currentChest)
+        {
+            currentChest.LootChest(this.gameObject);
+        }
+    }
     private void OnStorageUI(bool store)
     {
         if (store)
@@ -164,4 +178,7 @@ private InputManager inputManager;
     {
         menuOpen = storageInventory.isStorageOpen || isShopOpen || isInventoryOpen;
     }
+
+
+
 }

@@ -89,31 +89,32 @@ public class ChestControl : MonoBehaviour
     
     private void OnTriggerStay(Collider other)
     {
-        
-        if (other == null || other.gameObject.tag != "Player") return;
+
+        if (!other || !other.gameObject.CompareTag("Player")) return;
 
         canvasHandler.IsNearChest = true;
-        
+
+        other.GetComponent<InventoryScript>().currentChest = this;
 
         if (lootCoolDown && Time.time - lastLootedTime < lootCoolDownTime) return;
 
-        if (Input.GetKey(KeyCode.E))
+    /*    if (Input.GetKey(KeyCode.E))
         {
             LootChest(other.gameObject);
-        }
+        }*/
     }
 
     
     private void OnTriggerExit(Collider other)
     {
-        if (other == null || other.gameObject.tag != "Player") return;
+        if (!other || !other.gameObject.CompareTag("Player")) return;
 
-        
+        other.GetComponent<InventoryScript>().currentChest = null;
         canvasHandler.IsNearChest = false;
     }
 
   
-    private void LootChest(GameObject player)
+    public void LootChest(GameObject player)
     {
         if (itemsInChest.Count == 0) return;
 
@@ -121,6 +122,7 @@ public class ChestControl : MonoBehaviour
         if (playerController == null) return;
 
         int itemId = itemsInChest[0];
+        Debug.Log("lootchest not working" + playerController.inventory[itemId]);
         playerController.inventory[itemId] += 1;
         itemsInChest.RemoveAt(0);
 

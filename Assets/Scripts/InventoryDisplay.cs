@@ -58,54 +58,36 @@ public class InventoryDisplay : MonoBehaviour
     }
    public string getItemName(int itemNumID)
     {
-        if(itemNumID == 0)
+        switch (itemNumID)
         {
-            return "Bone";
-        }else if(itemNumID == 1)
-        {
-            return "Meat?";
-        }else if (itemNumID == 2)
-        {
-            return "Hide";
-        }else if (itemNumID == 3)
-            {
-            return "Iron";
-        }else if (itemNumID == 4)
-        {
-            return "Broken Swords";
+            case 0:
+                return "Bone";
+            case 1:
+                return "Meat?";
+            case 2:
+                return "Hide";
+            case 3:
+                return "Iron";
+            case 4:
+                return "Broken Swords";
+            case 5:             
+                return "Copper";
+            case 6:             
+                return "Wood";
+            case 7:             
+                return "Cloth";
+            case 8:             
+                return "Tea";
+            case 9:             
+                return "Painting";
+            case 10:            
+                return "Spork";
+            case 11:            
+                return "\"Magazines\"";
+            default:
+                return "UNKNOWN";
+               
         }
-        else if (itemNumID == 5)
-        {
-            return "Copper";
-        }
-        else if (itemNumID == 6)
-        {
-            return "Wood";
-        }
-        else if (itemNumID == 7)
-        {
-            return "Cloth";
-        }
-        else if (itemNumID == 8)
-        {
-            return "Tea";
-        }
-        else if (itemNumID == 9)
-        {
-            return "Painting";
-        }
-        else if (itemNumID == 10)
-        {
-            return "Spork";
-        }
-        else if (itemNumID == 11
-            )
-        {
-            return "\"Magazines\"";
-        }
-        else
-        {
-            return "UNKNOWN";
-        }
+
     }
 }
