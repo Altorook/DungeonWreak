@@ -9,9 +9,25 @@ public class SpawnEnemy : MonoBehaviour
     List<int> enemyAmount = new List<int>();
     int enemiesSpawned;
     List<GameObject> enemyList = new List<GameObject>();
+    GameObject playerCapsule;
+    ResetEnemyChest REC;
     // Start is called before the first frame update
     void Start()
     {
+        playerCapsule = GameObject.Find("PlayerCapsule");
+        REC = playerCapsule.GetComponent<ResetEnemyChest>();
+
+/*        enemiesSpawned = enemyAmount.ElementAt(Random.Range(0, enemyAmount.Count()));
+        for (int i = 0; i < enemiesSpawned; i++)
+        {
+            enemyList.Add(Instantiate(enemyV1Prefab, this.transform.position, Quaternion.identity));
+            enemyList.ElementAt(i).transform.parent = this.transform;
+            REC.enemiesInGame.Add(enemyList.ElementAt(i));
+        }*/
+     }
+     void OnEnable()
+    {
+        enemyAmount.Clear();
         enemyAmount.Add(2);
         enemyAmount.Add(3);
         enemyAmount.Add(3);
@@ -19,11 +35,15 @@ public class SpawnEnemy : MonoBehaviour
         enemyAmount.Add(4);
         enemyAmount.Add(5);
         enemyAmount.Add(6);
-       enemiesSpawned = enemyAmount.ElementAt(Random.Range(0,enemyAmount.Count()));
-        for(int i = 0; i < enemiesSpawned; i++)
+        playerCapsule = GameObject.Find("PlayerCapsule");
+        REC = playerCapsule.GetComponent<ResetEnemyChest>();
+        enemiesSpawned = enemyAmount.ElementAt(Random.Range(0, enemyAmount.Count()));
+        enemyList.Clear();
+        for (int i = 0; i < enemiesSpawned; i++)
         {
-          enemyList.Add(Instantiate(enemyV1Prefab,this.transform.position,Quaternion.identity));
+            enemyList.Add(Instantiate(enemyV1Prefab, this.transform.position, Quaternion.identity));
             enemyList.ElementAt(i).transform.parent = this.transform;
+            REC.enemiesInGame.Add(enemyList.ElementAt(i));
         }
     }
 

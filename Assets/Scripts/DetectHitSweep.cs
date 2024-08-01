@@ -9,10 +9,13 @@ public class DetectHitSweep : MonoBehaviour
     private float sweepDamageMin = 15f;
     private float sweepDamageMax = 25f;
     private float damageDealt;
+    GameObject playerCapsule;
+    PlayerController playerController;
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerCapsule = GameObject.Find("PlayerCapsule");
+        playerController = playerCapsule.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -25,7 +28,7 @@ public class DetectHitSweep : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             otherEnemyMovement = other.gameObject.GetComponent<EnemyMovementV1>();
-            damageDealt = Random.Range(sweepDamageMin, sweepDamageMax);
+            damageDealt = Random.Range(sweepDamageMin, sweepDamageMax)*playerController.damageBoost;
             otherEnemyMovement.OnSweepHit(damageDealt);
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine.UIElements;
 using TMPro;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
+using UnityEditor.Build;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,7 +18,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     GameObject playerObject;
 
-  
+    public float damageRes = 1;
+    public float damageBoost = 1;
+    float wineDuration = 25;
+    float timeForWine = 0;
+    bool wineDrank = false;
+
 
     [SerializeField]
     float playerSpeed = 7;
@@ -64,6 +70,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     GameObject shopCanvas;
    public bool isShopOpen = false;
+
+    bool canOpenShop = false;
+    bool canOpenStorage = false;
+    public bool canLootChest = false;
+    bool canGetInBed = false;
+    ResetEnemyChest REC;
+
+    public GameObject chestCollidedWith;
+
+    [SerializeField]
+    GameObject canvasObject;
+
+    Vector3 relativeVelocity;
     void Start()
     {
         gameManager = gameManagerObject.GetComponent<GameManager>();
@@ -81,11 +100,56 @@ public class PlayerController : MonoBehaviour
         storageCanvas.SetActive(true);
         storageInventory = storageCanvas.GetComponent<StorageInventory>();
         storageCanvas.SetActive(false);
+
+        REC = this.gameObject.GetComponent<ResetEnemyChest>();
     }
- void HandleStorageUI()
+
+    public void InteractWith()
     {
-        storageCanvas.SetActive(true);
-        shopCanvas.SetActive(true);
+        if (canOpenStorage)
+        {
+            HandleStorageUI();
+        }
+        if (canOpenShop)
+        {
+            isShopOpen = !isShopOpen;
+            storageCanvas.SetActive(isShopOpen);
+            shopCanvas.SetActive(isShopOpen);
+            if (isShopOpen)
+            {
+                storageInventory.isStorageOpen = !isShopOpen;
+            }
+        }
+        if (canLootChest)
+        {
+            chestCollidedWith.GetComponent<ChestControl>().LootFromChest(this.gameObject);
+        }
+        if (canGetInBed)
+        {
+            REC.HandleReset();
+            Debug.Log("Why");
+        }
+    }
+    public void WineDrank()
+    {
+        timeForWine = 0;
+        wineDrank = true;
+    }
+    void WineEffect()
+    {
+        damageBoost = 1.5f;
+        damageRes = 1.5f;
+        timeForWine += Time.deltaTime;
+        if(timeForWine > wineDuration)
+        {
+            wineDrank = false;
+            damageRes = 1;
+            damageBoost = 1;
+        }
+    }
+    void HandleStorageUI()
+    {
+
         storageInventory = storageCanvas.GetComponent<StorageInventory>();
         storageInventory.isStorageOpen = !storageInventory.isStorageOpen;
         storageInventory.UpdateStorageInventory();
@@ -96,23 +160,25 @@ public class PlayerController : MonoBehaviour
         }
         
     }
+
+  /*  public void Rotation(Vector2 input)
+    {
+        if (menuOpen == false)
+        {
+            HandleSprint();
+            mouseYRotation -= input.y * mouseSens;
+            mouseYRotation = Mathf.Clamp(mouseYRotation, -45, 45);
+            mouseXRotation = input.x;
+            playerTransform.Rotate(new Vector3(0, mouseXRotation * mouseSens, 0));
+            camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
+        }
+    }*/
     // Update is called once per frame
     void Update()
     {
-
-        if (Input.GetKeyUp(KeyCode.P))
+        if(wineDrank)
         {
-            HandleStorageUI();
-        }
-        if (Input.GetKeyUp(KeyCode.O))
-        {
-            isShopOpen = !isShopOpen;
-            storageCanvas.SetActive(isShopOpen);
-            shopCanvas.SetActive(isShopOpen);
-            if (isShopOpen)
-            {
-                storageInventory.isStorageOpen = !isShopOpen;
-            }
+            WineEffect();
         }
 
         if (storageInventory.isStorageOpen || isShopOpen || isInventoryOpen)
@@ -144,12 +210,15 @@ public class PlayerController : MonoBehaviour
 
 
         healthText.SetText(playerHealth.ToString());
-        HandleSprint();
-        mouseYRotation -= Input.GetAxis("Mouse Y") * mouseSens;
-        mouseYRotation = Mathf.Clamp(mouseYRotation, -45, 45);
-        playerTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * mouseSens, 0));
-        camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
-
+        if(menuOpen == false)
+        {
+            HandleSprint();
+            //cant figure out how to make the input system work smoothly for the mouse
+            mouseYRotation -= Input.GetAxis("Mouse Y") * mouseSens;
+            mouseYRotation = Mathf.Clamp(mouseYRotation, -45, 45);
+            playerTransform.Rotate(new Vector3(0, Input.GetAxis("Mouse X") * mouseSens, 0));
+            camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
+        }
         HandleInventory();
     }
     public void HandleInventory()
@@ -172,7 +241,10 @@ public class PlayerController : MonoBehaviour
         }
         if (isInventoryOpen)
         {
+
             inventoryCanvas.SetActive(true);
+
+
         }
         else
         {
@@ -180,21 +252,21 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    public void EnableSprint()
+    {
+        isSprinting = true;
+    }
+    public void DisableSprint()
+    {
+        isSprinting = false;
+    }
     private void HandleSprint()
     {
-        if(Input.GetKey(KeyCode.LeftShift)&&stamina>0)
-        {
-            isSprinting = true;
-        }
-        else
-        {
-            isSprinting = false;
-        }
         if (isSprinting)
         {
             stamina -= 0.3f;
         }
-        else if (stamina<maxStamina&&!Input.GetKey(KeyCode.LeftShift))
+        else if (stamina<maxStamina&&isSprinting == false)
         {
             stamina += 0.25f; 
         }
@@ -211,20 +283,60 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-       
-        Vector3 relativeVelocity;
-
         if (isSprinting)
         {
-            relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * sprintSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * sprintSpeed);
+            playerRigidbody.velocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * (relativeVelocity * sprintSpeed) + new Vector3(0, playerRigidbody.velocity.y, 0);
         }
         else
         {
-            relativeVelocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * new Vector3(Input.GetAxis("Horizontal") * playerSpeed, playerRigidbody.velocity.y, Input.GetAxis("Vertical") * playerSpeed);
+            playerRigidbody.velocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * relativeVelocity + new Vector3(0,playerRigidbody.velocity.y,0) ;
         }
-        playerRigidbody.velocity = relativeVelocity;
-
+    }
+    public void Movement(Vector2 input)
+    {
+        
+        if (menuOpen == false)
+        {
+       
+                relativeVelocity = new Vector3(input.x * playerSpeed, 0, input.y * playerSpeed);
+        }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Shop")
+        {
+            canvasObject.SetActive(true);
+            canOpenShop = true;
+        }
+        else if(other.tag == "Storage")
+        {
+            canvasObject.SetActive(true);
+            canOpenStorage = true;
+        }
+        else if (other.tag == "Bed")
+        {
+            canvasObject.SetActive(true);
+            canGetInBed = true;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Shop")
+        {
+            canvasObject.SetActive(false);
+            canOpenShop = false;
+        }
+        else if (other.tag == "Storage")
+        {
+            canvasObject.SetActive(false);
+            canOpenStorage = false;
+        }
+        else if( other.tag == "Bed")
+        {
+            canvasObject.SetActive(false);
+            canGetInBed = false;
+        }
+    }
 
 }

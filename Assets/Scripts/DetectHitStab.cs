@@ -14,10 +14,14 @@ public class DetectHitStab : MonoBehaviour
     public float stabAttackCurrentTime = 0;
     public bool isAttacking = false;
     Animator swordattack;
+    GameObject playerCapsule;
+    PlayerController playerController;
+ 
     // Start is called before the first frame update
     void Start()
     {
-        
+        playerCapsule = GameObject.Find("PlayerCapsule");
+        playerController = playerCapsule.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -40,7 +44,7 @@ public class DetectHitStab : MonoBehaviour
             if (stabAttackCurrentTime < stabAttackTime && isAttacking == false)
             {
                 otherEnemyMovement = other.gameObject.GetComponent<EnemyMovementV1>();
-                damageDealt = Random.Range(stabDamageMin, stabDamageMax);
+                damageDealt = Random.Range(stabDamageMin, stabDamageMax)*playerController.damageBoost;
                 otherEnemyMovement.OnStabHit(damageDealt);
                 isAttacking = true;
             }

@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     float health;
-    int silverCurrency = 0;
+    int silverCurrency = 50;
     int goldCurrency = 0;
     [SerializeField]
     GameObject SilverText;
@@ -24,7 +25,7 @@ public class GameManager : MonoBehaviour
     {
         if(health  < 0)
         {
-            Debug.Log("You Died");
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
         if(GetSilver() >= 100)
         {

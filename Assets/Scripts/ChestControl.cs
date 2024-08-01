@@ -8,6 +8,7 @@ public class ChestControl : MonoBehaviour
 {
     GameObject canvasObject;
     CanvasHandler canvasHandler;
+    GameObject interactObject;
     int amountOfBones = 8;
     int amountOfMeat = 6;
     int amountOfLeather = 5;
@@ -33,11 +34,20 @@ public class ChestControl : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        inventoryCanvas = GameObject.Find("InventoryCanvas");
-        inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
+        interactObject = GameObject.Find("TextHolderChestE");
+            canvasObject = GameObject.Find("Canvas");
+            canvasHandler = canvasObject.GetComponent<CanvasHandler>();
 
-        canvasObject = GameObject.Find("Canvas");
-        canvasHandler = canvasObject.GetComponent<CanvasHandler>();
+
+        generateNewPool();
+        amountInChest = Random.Range(minItemsInChest, maxItemsInChest);
+        for (int i = 0; i < amountInChest; i++)
+        {
+            itemsInChest.Add(itemPool.ElementAt(Random.Range(0, itemPool.Count)));
+        }
+    }
+    private void OnEnable()
+    {
         generateNewPool();
         amountInChest = Random.Range(minItemsInChest, maxItemsInChest);
         for (int i = 0; i < amountInChest; i++)
@@ -103,14 +113,47 @@ public class ChestControl : MonoBehaviour
             itemPool.Add(11);
         }
     }
+    public void LootFromChest(GameObject playerObj)
+    {
+        if(lootCoolDown == false)
+        {
+            lootCoolDown = true;
+            PlayerController playCont = playerObj.GetComponent<PlayerController>();
+            playCont.inventory[itemsInChest.ElementAt(0)] += 1;
+            itemsInChest.RemoveAt(0);
+            if (GameObject.Find("InventoryCanvas") != null)
+            {
+                inventoryCanvas = GameObject.Find("InventoryCanvas");
+                inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
+                if (inventoryDisplay.isActiveAndEnabled)
+                {
+                    inventoryDisplay.updateInventory();
+                }
+            }
+
+            if (itemsInChest.Count == 0)
+            {
+                canvasHandler.IsNearChest = false;
+                playerObj.GetComponent<PlayerController>().canLootChest = false;
+                playerObj.GetComponent<PlayerController>().chestCollidedWith = null;
+                interactObject.SetActive(false);
+                Destroy(this.gameObject);
+
+            }
+        }
+       
+    }
     public void OnTriggerStay(Collider other)
     {
         if (other != null)
         {
             if (other.gameObject.tag == "Player")
             {
+                interactObject.SetActive(true);
                 this.GetComponentInChildren<TMP_Text>().SetText("OI");
                 canvasHandler.IsNearChest = true;
+                other.gameObject.GetComponent<PlayerController>().canLootChest = true;
+                other.gameObject.GetComponent<PlayerController>().chestCollidedWith = this.gameObject;
                 if (lootCoolDown)
                 {
                     framesSinceLooted++;
@@ -119,25 +162,6 @@ public class ChestControl : MonoBehaviour
                         framesSinceLooted = 0;
                         lootCoolDown = false;
                     }
-                }
-                if (Input.GetKey(KeyCode.E) && lootCoolDown == false)
-                {
-                    
-                    
-                    lootCoolDown = true;
-                    PlayerController playCont = other.gameObject.GetComponent<PlayerController>();
-                    playCont.inventory[itemsInChest.ElementAt(0)]+=1;
-                    itemsInChest.RemoveAt(0);
-                    if (inventoryDisplay.isActiveAndEnabled)
-                    {   
-                        inventoryDisplay.updateInventory();
-                    }
-                    if (itemsInChest.Count == 0)
-                    {
-                        canvasHandler.IsNearChest = false;
-                        Destroy(this.gameObject); 
-                    }
-                   
                 }
             }
         }
@@ -148,8 +172,11 @@ public class ChestControl : MonoBehaviour
         {
             if (other.gameObject.tag == "Player")
             {
+                interactObject.SetActive(false);
                 this.GetComponentInChildren<TMP_Text>().SetText("");
                 canvasHandler.IsNearChest = false;
+                other.gameObject.GetComponent<PlayerController>().canLootChest = false;
+                other.gameObject.GetComponent<PlayerController>().chestCollidedWith = null;
             }
         }
     }

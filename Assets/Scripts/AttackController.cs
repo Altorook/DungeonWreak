@@ -26,17 +26,30 @@ public class AttackController : MonoBehaviour
         detectSweep = SweepHitBox.GetComponent<DetectHitSweep>();
         detectStab = StabHitBox.GetComponent<DetectHitStab>();
     }
-
-    // Update is called once per frame
-    void Update()
+    public void LAttack()
     {
-        if(Input.GetMouseButton(1) && isAttacking == false)
+        if (isAttacking == false)
         {
             isAttacking = true;
             stabAttack = true;
             doAttack = true;
-            
+
         }
+    }
+    public void RAttack()
+    {
+        if (isAttacking == false)
+        {
+            isAttacking = true;
+            sweepAttack = true;
+            doAttack = true;
+
+        }
+    }
+    // Update is called once per frame
+    void Update()
+    {
+        
         if (stabAttack)
         {
             stabAttackTime += Time.deltaTime;
@@ -59,13 +72,7 @@ public class AttackController : MonoBehaviour
         }
 
 
-        if (Input.GetMouseButton(0) && isAttacking == false)
-        {
-            isAttacking = true;
-            sweepAttack = true;
-            doAttack = true;
-            
-        }
+       
         if(sweepAttack)
         {
             sweepAttackTime += Time.deltaTime;

@@ -8,6 +8,8 @@ public class DroppedSwordPickup : MonoBehaviour
     public GameObject usableItemObject;
     public UsableItems usableItems;
     public int idOfThis = 1;
+    public int breadUses = 9;
+    public int breadUsesFromSource;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,9 +27,9 @@ public class DroppedSwordPickup : MonoBehaviour
      
         if(other.gameObject.tag == "Player")
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.F))
             {
-                if (usableItems.AddNewItem(idOfThis))
+                if (usableItems.AddNewItem(idOfThis,breadUses))
                 {
                     Destroy(this.gameObject.transform.parent.transform.parent.gameObject);
                 }

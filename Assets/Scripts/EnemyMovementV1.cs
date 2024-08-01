@@ -195,7 +195,7 @@ public class EnemyMovementV1 : MonoBehaviour
         float attackDamage;
         attackDamage = Random.Range(attackDamageMin, attackDamageMax);
        PlayerController playerContoller = playerObject.GetComponent<PlayerController>();
-        playerContoller.playerHealth -= attackDamage;
+        playerContoller.playerHealth -= attackDamage/playerContoller.damageRes;
        
 
     }

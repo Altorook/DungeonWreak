@@ -23,13 +23,17 @@ public class UsableItems : MonoBehaviour
     GameObject playerCapsule;
 
     public DisplayUsableItem[] itemSlotScript = new DisplayUsableItem[5];
+    public int[] breadSlotUses = new int[5];
     public int[] usableItemArray = new int[5];
     public int activeItemSlot = 1;
     public int checkIfItemChanged;
+    [SerializeField]
+    GameObject breadObject;
+    ControlBread controlBread;
     // Start is called before the first frame update
     void Start()
     {
-
+       controlBread = breadObject.GetComponent<ControlBread>();
         Debug.Log(usableItemArray.Length + " " + itemSlots.Length + " " + itemSlotScript.Length); ;
         for (int i = 0; i < itemSlotScript.Length; i++)
         {
@@ -37,15 +41,16 @@ public class UsableItems : MonoBehaviour
             usableItemArray[i] = 10;
         }
         usableItemArray[0] = 1;
-        usableItemArray[1] = 2;
-        usableItemArray[2] = 3;
+        usableItemArray[1] = 0;
+        usableItemArray[2] = 0;
         usableItemArray[3] = 4;
-        usableItemArray[4] = 5;
+        usableItemArray[4] = 0;
+        breadSlotUses[3] = 9;
         for (int i = 0; i < itemSlotScript.Length; i++)
         {
             itemSlotScript[i].SetText(getUsableItemName(usableItemArray[i]));
         }
-        SetActive(activeItemSlot - 1);
+        SetActive(0);
         checkIfItemChanged = activeItemSlot;
     }
 
@@ -60,41 +65,40 @@ public class UsableItems : MonoBehaviour
 
             checkIfItemChanged = activeItemSlot;
         }
-        if (Input.GetKey(KeyCode.Alpha1))
-        {
-            activeItemSlot = 1;
-            SetActive(activeItemSlot-1);
-        }
-        if (Input.GetKey(KeyCode.Alpha2))
-        {
-            activeItemSlot = 2;
-            SetActive(activeItemSlot - 1);
-        }
-        if (Input.GetKey(KeyCode.Alpha3))
-        {
-            activeItemSlot = 3;
-            SetActive(activeItemSlot - 1);
-        }
-        if (Input.GetKey(KeyCode.Alpha4))
-        {
-            activeItemSlot = 4;
-            SetActive(activeItemSlot - 1);
-        }
-        if (Input.GetKey(KeyCode.Alpha5))
-        {
-            activeItemSlot = 5;
-            SetActive(activeItemSlot - 1);
-        }
+
+    }
+    public void SwitchItem(int i)
+    {
+        activeItemSlot = i;
+        SetActive(activeItemSlot - 1);
+    }
+    public void ChangeBreadUses(int breadLeft)
+    {
+        breadSlotUses[activeItemSlot - 1] = breadLeft;
+    }
+    public void UseWine()
+    {
+        itemsToUse[activeItemSlot - 1].SetActive(false);
+        usableItemArray[activeItemSlot - 1] = 0;
+        itemSlotScript[activeItemSlot - 1].SetText(getUsableItemName(usableItemArray[activeItemSlot - 1]));
     }
     void DropItem()
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
+            
             if (usableItemArray[activeItemSlot-1]!= 0) 
             {
                 GameObject newDrop = Instantiate(droppedItemPrefabs.ElementAt(usableItemArray[activeItemSlot - 1] - 1), playerCapsule.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
                 newDrop.transform.GetChild(0).transform.GetChild(0).GetComponent<DroppedSwordPickup>().idOfThis = usableItemArray[activeItemSlot - 1];
+                if (usableItemArray[activeItemSlot - 1] == 4)
+                {
+                    newDrop.transform.GetChild(0).transform.GetChild(0).GetComponent<DroppedSwordPickup>().breadUses = breadSlotUses[activeItemSlot - 1];
+                    newDrop.transform.GetChild(0).transform.GetChild(0).GetComponent<DroppedSwordPickup>().breadUsesFromSource = breadSlotUses[activeItemSlot - 1];
+                    breadSlotUses[activeItemSlot - 1] = 0;
+                }
                 usableItemArray[activeItemSlot - 1] = 0;
+
             }
 
             itemsToUse[activeItemSlot - 1].SetActive(false);
@@ -106,12 +110,17 @@ public class UsableItems : MonoBehaviour
 
         }
     }
-    public bool AddNewItem(int thisID)
+    public bool AddNewItem(int thisID, int breadUses)
     {
         bool openSpot = false;
 
         if (usableItemArray[activeItemSlot-1] == 0)
         {
+            if(thisID == 4)
+            {
+                breadSlotUses[activeItemSlot - 1] = breadUses;
+                controlBread.currentBreadUses = breadUses;
+            }
             openSpot = true;
             itemsToUse[activeItemSlot - 1].SetActive(false);
             usableItemArray[activeItemSlot - 1] = thisID;
@@ -122,6 +131,8 @@ public class UsableItems : MonoBehaviour
             {
                 if (usableItemArray[i] == 0)
                 {
+                    breadSlotUses[i] = breadUses;
+                    //controlBread.currentBreadUses = breadUses;
                     openSpot = true;
                     usableItemArray[i] = thisID;
                     break;
@@ -158,42 +169,32 @@ public class UsableItems : MonoBehaviour
     {
         itemsToUse[lastItem].SetActive(false);
         itemsToUse[active].SetActive(true);
+        if (usableItemArray[active] == 4)
+        {
+            controlBread.currentBreadUses = breadSlotUses[active];
+        }
        
     }
     public string getUsableItemName(int itemNumID)
     {
-        if (itemNumID == 0)
+        switch (itemNumID)
         {
-            return "No Item";
+            case 0:
+                return "No Item";
+            case 1:
+                return "Starting Sword";
+            case 2: 
+                return "Starting Axe";
+            case 3: 
+                return "Torch";
+            case 4: 
+                return "Bread";
+            case 5: 
+                return "Wine";
+            case 6:
+                  return "Cheese";
+            default:
+                return "Unknown";
         }
-        if (itemNumID == 1)
-        {
-            return "Starting Sword";
-        }
-        else if (itemNumID == 2)
-        {
-            return "Starting Axe";
-        }
-        else if (itemNumID == 3)
-        {
-            return "Torch";
-        }
-        else if (itemNumID == 4)
-        {
-            return "Bread";
-        }
-        else if (itemNumID == 5)
-        {
-            return "Wine";
-        }
-        else if (itemNumID == 6)
-        {
-            return "Cheese";
-        }
-        else
-        {
-            return "Unknown";
-        }
-
     }
 }

@@ -18,14 +18,7 @@ public class CanvasHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (IsNearChest)
-        {
-            ChestProximity.SetActive(true);
-        }
-        else
-        {
-            ChestProximity.SetActive(false);
-        }
+       
     }
  
 }

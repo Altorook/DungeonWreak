@@ -17,23 +17,30 @@ public class InventoryItemData : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        storageCanvas = GameObject.Find("StorageBoxInventory");
-        playerCapsule = GameObject.Find("PlayerCapsule");
-        shopCanvas = GameObject.Find("ShopUI");
 
-        storageInventory = storageCanvas.GetComponent<StorageInventory>();
-        playerController = playerCapsule.GetComponent<PlayerController>();
-        handleShop = shopCanvas.GetComponent<HandleShop>();
     }
     private void OnEnable()
     {
-        storageCanvas = GameObject.Find("StorageBoxInventory");
-        playerCapsule = GameObject.Find("PlayerCapsule");
-        shopCanvas = GameObject.Find("ShopUI");
+        if (GameObject.Find("StorageBoxInventory") != null)
+        {
+            storageCanvas = GameObject.Find("StorageBoxInventory");
+            storageInventory = storageCanvas.GetComponent<StorageInventory>();
+        }
+        if (GameObject.Find("PlayerCapsule") != null)
+        {
+            playerCapsule = GameObject.Find("PlayerCapsule");
+            playerController = playerCapsule.GetComponent<PlayerController>();
+        }
+        if (GameObject.Find("ShopUI") != null)
+        {
 
-        storageInventory = storageCanvas.GetComponent<StorageInventory>();
-        playerController = playerCapsule.GetComponent<PlayerController>();
-        handleShop = shopCanvas.GetComponent<HandleShop>();
+
+            shopCanvas = GameObject.Find("ShopUI");
+
+
+            handleShop = shopCanvas.GetComponent<HandleShop>();
+        }
+
     }
     public void setInfo(int id, int quant)
     {
@@ -57,7 +64,7 @@ public class InventoryItemData : MonoBehaviour
         }
         else if (this.transform.parent.name == "InventoryCanvas")
         {
-            Debug.Log("inv");
+
         }
         else if(this.transform.parent.name == "ShopInventory")
         {
