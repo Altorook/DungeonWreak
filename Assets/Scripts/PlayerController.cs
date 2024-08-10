@@ -1,11 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UIElements;
 using TMPro;
-using UnityEngine.SceneManagement;
-using Unity.VisualScripting;
-using UnityEditor.Build;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -46,9 +41,9 @@ public class PlayerController : MonoBehaviour
     GameObject gameManagerObject;
     GameManager gameManager;
     public List<int> inventory = new List<int>();
-   public int totalItemsInGame = 20;
+    public int totalItemsInGame = 20;
 
-   public bool isSprinting = false;
+    public bool isSprinting = false;
 
     public float playerHealth = 100;
     float checkIfHealthChanged;
@@ -58,7 +53,7 @@ public class PlayerController : MonoBehaviour
 
     GameObject inventoryCanvas;
     InventoryDisplay inventoryDisplay;
-   public bool isInventoryOpen = false;
+    public bool isInventoryOpen = false;
     bool inventoryOpen = false;
     float timeOpened = 0;
 
@@ -69,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     GameObject shopCanvas;
-   public bool isShopOpen = false;
+    public bool isShopOpen = false;
 
     bool canOpenShop = false;
     bool canOpenStorage = false;
@@ -92,7 +87,7 @@ public class PlayerController : MonoBehaviour
         inventoryDisplay = inventoryCanvas.GetComponent<InventoryDisplay>();
 
         healthText = GameObject.Find("PlayerHealth").GetComponent<TMP_Text>();
-        for(int i = 0; i < totalItemsInGame; i++)
+        for (int i = 0; i < totalItemsInGame; i++)
         {
             inventory.Add(0);
         }
@@ -140,7 +135,7 @@ public class PlayerController : MonoBehaviour
         damageBoost = 1.5f;
         damageRes = 1.5f;
         timeForWine += Time.deltaTime;
-        if(timeForWine > wineDuration)
+        if (timeForWine > wineDuration)
         {
             wineDrank = false;
             damageRes = 1;
@@ -158,25 +153,25 @@ public class PlayerController : MonoBehaviour
         {
             isShopOpen = !storageInventory.isStorageOpen;
         }
-        
+
     }
 
-  /*  public void Rotation(Vector2 input)
-    {
-        if (menuOpen == false)
-        {
-            HandleSprint();
-            mouseYRotation -= input.y * mouseSens;
-            mouseYRotation = Mathf.Clamp(mouseYRotation, -45, 45);
-            mouseXRotation = input.x;
-            playerTransform.Rotate(new Vector3(0, mouseXRotation * mouseSens, 0));
-            camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
-        }
-    }*/
+    /*  public void Rotation(Vector2 input)
+      {
+          if (menuOpen == false)
+          {
+              HandleSprint();
+              mouseYRotation -= input.y * mouseSens;
+              mouseYRotation = Mathf.Clamp(mouseYRotation, -45, 45);
+              mouseXRotation = input.x;
+              playerTransform.Rotate(new Vector3(0, mouseXRotation * mouseSens, 0));
+              camTransform.eulerAngles = new Vector3(mouseYRotation, playerTransform.eulerAngles.y, 0);
+          }
+      }*/
     // Update is called once per frame
     void Update()
     {
-        if(wineDrank)
+        if (wineDrank)
         {
             WineEffect();
         }
@@ -190,13 +185,13 @@ public class PlayerController : MonoBehaviour
             menuOpen = false;
         }
 
-        if(checkIfHealthChanged != playerHealth)
+        if (checkIfHealthChanged != playerHealth)
         {
             gameManager.SetHealth(playerHealth);
             checkIfHealthChanged = playerHealth;
         }
-      
-         
+
+
         if (menuOpen)
         {
             UnityEngine.Cursor.lockState = CursorLockMode.None;
@@ -210,7 +205,7 @@ public class PlayerController : MonoBehaviour
 
 
         healthText.SetText(playerHealth.ToString());
-        if(menuOpen == false)
+        if (menuOpen == false)
         {
             HandleSprint();
             //cant figure out how to make the input system work smoothly for the mouse
@@ -251,7 +246,7 @@ public class PlayerController : MonoBehaviour
             inventoryCanvas.SetActive(false);
         }
     }
-    
+
     public void EnableSprint()
     {
         isSprinting = true;
@@ -266,17 +261,17 @@ public class PlayerController : MonoBehaviour
         {
             stamina -= 0.3f;
         }
-        else if (stamina<maxStamina&&isSprinting == false)
+        else if (stamina < maxStamina && isSprinting == false)
         {
-            stamina += 0.25f; 
+            stamina += 0.25f;
         }
-        if(stamina>maxStamina) 
+        if (stamina > maxStamina)
         {
             stamina = maxStamina;
         }
-        if(stamina<=0)
+        if (stamina <= 0)
         {
-            stamina=0;
+            stamina = 0;
             isSprinting = false;
         }
     }
@@ -289,27 +284,27 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            playerRigidbody.velocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * relativeVelocity + new Vector3(0,playerRigidbody.velocity.y,0) ;
+            playerRigidbody.velocity = Quaternion.Euler(0, playerTransform.eulerAngles.y, 0) * relativeVelocity + new Vector3(0, playerRigidbody.velocity.y, 0);
         }
     }
     public void Movement(Vector2 input)
     {
-        
+        Debug.Log("tried to move");
         if (menuOpen == false)
         {
-       
-                relativeVelocity = new Vector3(input.x * playerSpeed, 0, input.y * playerSpeed);
+
+            relativeVelocity = new Vector3(input.x * playerSpeed, 0, input.y * playerSpeed);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Shop")
+        if (other.tag == "Shop")
         {
             canvasObject.SetActive(true);
             canOpenShop = true;
         }
-        else if(other.tag == "Storage")
+        else if (other.tag == "Storage")
         {
             canvasObject.SetActive(true);
             canOpenStorage = true;
@@ -332,7 +327,7 @@ public class PlayerController : MonoBehaviour
             canvasObject.SetActive(false);
             canOpenStorage = false;
         }
-        else if( other.tag == "Bed")
+        else if (other.tag == "Bed")
         {
             canvasObject.SetActive(false);
             canGetInBed = false;
